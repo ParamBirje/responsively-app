@@ -36,10 +36,17 @@ const Toolbar = ({
   const [rotated, setRotated] = useState<boolean>(false);
 
   const refreshView = () => {
+<<<<<<< HEAD
     if (webview){
-      webview.reload()
+      webview.reload();
     }
-  }
+  };
+=======
+    if (webview) {
+      webview.reload();
+    }
+  };
+>>>>>>> main
 
   const toggleEventMirroring = async () => {
     if (webview == null) {

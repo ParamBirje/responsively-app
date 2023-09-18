@@ -103,7 +103,7 @@ Install the handy browser extension to easily send links from your browser to th
 
 - [Download for Chrome](https://chrome.google.com/webstore/detail/responsively-helper/jhphiidjkooiaollfiknkokgodbaddcj) <a href="https://chrome.google.com/webstore/detail/responsively-helper/jhphiidjkooiaollfiknkokgodbaddcj" target="_blank"><img alt="Chrome Web Store" src="https://img.shields.io/chrome-web-store/users/jhphiidjkooiaollfiknkokgodbaddcj"></a>
 - [Download for Firefox](https://addons.mozilla.org/en-US/firefox/addon/responsively-helper/) <a href="https://addons.mozilla.org/en-US/firefox/addon/responsively-helper/" target="_blank"><img alt="Mozilla Add-on" src="https://img.shields.io/amo/users/responsively-helper"></a>
-- [Download for Edge](https://microsoftedge.microsoft.com/addons/detail/responsively-helper/ooiejjgflcgkbbehheengalibfehaojn)
+- [Download for Edge](https://microsoftedge.microsoft.com/addons/detail/responsively-helper/ooiejjgflcgkbbehheengalibfehaojn) <a href="https://microsoftedge.microsoft.com/addons/detail/responsively-helper/ooiejjgflcgkbbehheengalibfehaojn" target="_blank"><img alt="Edge Add-on" src="https://img.shields.io/badge/dynamic/json?label=users&query=%24.activeInstallCount&url=https%3A%2F%2Fmicrosoftedge.microsoft.com%2Faddons%2Fgetproductdetailsbycrxid%2Fooiejjgflcgkbbehheengalibfehaojn"></a>
 
 ## Issues
 
@@ -248,6 +248,8 @@ Thanks go to these wonderful people ([emoji key](https://allcontributors.org/doc
     </tr>
     <tr>
       <td align="center" valign="top" width="20%"><a href="https://refer.codes/jeff"><img src="https://avatars.githubusercontent.com/u/272795?v=4?s=100" width="100px;" alt="Jeff Bowen"/><br /><sub><b>Jeff Bowen</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=jeffbowen" title="Code">💻</a></td>
+      <td align="center" valign="top" width="20%"><a href="https://github.com/ParamBirje"><img src="https://avatars.githubusercontent.com/u/87022870?v=4?s=100" width="100px;" alt="Param Birje"/><br /><sub><b>Param Birje</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=ParamBirje" title="Code">💻</a></td>
+      <td align="center" valign="top" width="20%"><a href="https://github.com/prajjwalyd"><img src="https://avatars.githubusercontent.com/u/111794524?v=4?s=100" width="100px;" alt="Prajjwal Yadav"/><br /><sub><b>Prajjwal Yadav</b></sub></a><br /><a href="https://github.com/responsively-org/responsively-app/commits?author=prajjwalyd" title="Documentation">📖</a></td>
     </tr>
   </tbody>
 </table>
