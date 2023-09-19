@@ -4,6 +4,7 @@ import { IPC_MAIN_CHANNELS, OpenUrlArgs } from 'common/constants';
 import { AuthRequestArgs } from 'main/http-basic-auth';
 import { PermissionRequestArg } from 'main/web-permissions/PermissionsManager';
 import {
+  DragEvent,
   KeyboardEventHandler,
   useCallback,
   useEffect,
@@ -34,6 +35,9 @@ export const ADDRESS_BAR_EVENTS = {
 const AddressBar = () => {
   const inputRef = useRef<HTMLInputElement>(null);
   const [typedAddress, setTypedAddress] = useState<string>('');
+  
+  const [isDragOver, setIsDragOver] = useState<boolean>(false);
+
   const [isSuggesting, setIsSuggesting] = useState<boolean>(false);
   const [homepage, setHomepage] = useState<string>(
     window.electron.store.get('homepage')
@@ -49,6 +53,34 @@ const AddressBar = () => {
   const address = useSelector(selectAddress);
   const pageTitle = useSelector(selectPageTitle);
   const dispatch = useDispatch();
+  
+  const handleDragEnter = (e: DragEvent) => {
+    e.preventDefault();
+    setIsDragOver(true);
+  };
+
+  const handleDragExit = (e: DragEvent) => {
+    e.preventDefault();
+    setIsDragOver(false);
+  };
+
+  const handleDrop = (e: DragEvent) => {
+    e.preventDefault();
+    setIsDragOver(false);
+
+    const draggedText = e.dataTransfer.getData('text/plain');
+
+    try {
+      const draggedUrl = new URL(draggedText);
+      if (draggedUrl.protocol === 'http:' || draggedUrl.protocol === 'https:') {
+        dispatchAddress(draggedUrl.href);
+      } else {
+        throw new Error('Invalid URL');
+      }
+    } catch (e) {
+      console.log('Invalid URL');
+    }
+  };
 
   useEffect(() => {
     if (address === typedAddress) {
@@ -180,8 +212,13 @@ const AddressBar = () => {
 
   return (
     <>
-      <div className="relative z-10 w-full flex-grow">
-        <div className="absolute top-2 left-2 mr-2 flex flex-col items-start">
+      <div
+        onDragEnter={handleDragEnter}
+        onDragLeave={handleDragExit}
+        onDrop={handleDrop}
+        className="relative z-10 w-full flex-grow"
+      >
+        <div className="absolute left-2 top-2 mr-2 flex flex-col items-start">
           <Icon icon="mdi:web" className="text-gray-500" />
           {permissionRequest != null ? (
             <div className="z-40 mt-4 flex w-96 flex-col gap-8 rounded bg-white p-6 shadow-lg ring-1 ring-slate-500 !ring-opacity-40 focus:outline-none dark:bg-slate-900 dark:ring-white dark:!ring-opacity-40">
@@ -221,7 +258,7 @@ const AddressBar = () => {
           className={cx(
             'w-full text-ellipsis rounded-full px-2 py-1 pl-8 pr-20 dark:bg-slate-900',
             {
-              'rounded-tl-lg rounded-tr-lg rounded-bl-none rounded-br-none outline-none':
+              'rounded-bl-none rounded-br-none rounded-tl-lg rounded-tr-lg outline-none':
                 isSuggesting,
             }
           )}
@@ -234,6 +271,18 @@ const AddressBar = () => {
             }, 100);
           }}
         />
+
+        {/* ----------- DRAG ---------- */}
+
+        <div
+          className={`${
+            isDragOver ? 'opacity-100' : 'opacity-0'
+          } pointer-events-none absolute left-0 top-0 z-10 flex h-full w-full border-spacing-1 items-center justify-center gap-2 rounded-full border-2 border-dashed border-green-700 bg-green-300 duration-100 dark:text-slate-900`}
+        >
+          <Icon icon="mdi:plus" />
+          <p className="text-sm">Drop URL Here</p>
+        </div>
+
         <div className="absolute inset-y-0 right-0 mr-2 flex items-center">
           <Button
             className="rounded-full"
