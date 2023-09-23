@@ -35,6 +35,8 @@ const Toolbar = ({
     useState<boolean>(false);
   const [rotated, setRotated] = useState<boolean>(false);
 
+  const toggleJavascript = () => {};
+  
   const refreshView = () => {
     if (webview) {
       webview.reload();
