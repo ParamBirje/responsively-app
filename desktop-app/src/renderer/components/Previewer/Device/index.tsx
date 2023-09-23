@@ -466,6 +466,8 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
           className="origin-top-left"
           /* eslint-disable-next-line react/no-unknown-property */
           preload={`file://${window.responsively.webviewPreloadPath}`}
+          /* eslint-disable-next-line react/no-unknown-property */
+          webpreferences='javascript=yes'
           data-scale-factor={zoomfactor}
           /* eslint-disable-next-line react/no-unknown-property */
           allowpopups={isPrimary ? ('true' as any) : undefined}
