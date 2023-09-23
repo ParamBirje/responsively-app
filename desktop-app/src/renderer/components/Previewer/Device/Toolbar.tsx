@@ -34,9 +34,14 @@ const Toolbar = ({
   const [fullScreenshotLoading, setFullScreenshotLoading] =
     useState<boolean>(false);
   const [rotated, setRotated] = useState<boolean>(false);
+  const [allowJavascript, setAllowJavascript] = useState<boolean>(true);
 
-  const toggleJavascript = () => {};
-  
+  const toggleJavascript = () => {
+    if (webview) {
+      // do something to refresh device views but toggle javascript
+    }
+  };
+
   const refreshView = () => {
     if (webview) {
       webview.reload();
@@ -144,11 +149,11 @@ const Toolbar = ({
           <div className="relative h-4 w-4">
             <Icon
               icon="ic:outline-photo-camera"
-              className="absolute top-0 left-0"
+              className="absolute left-0 top-0"
             />
             <Icon
               icon="clarity:lightning-solid"
-              className="absolute top-[-1px] right-[-2px]"
+              className="absolute right-[-2px] top-[-1px]"
               height={8}
             />
           </div>
@@ -178,6 +183,16 @@ const Toolbar = ({
                 : 'mdi:phone-rotate-landscape'
             }
           />
+        </Button>
+        <Button
+          onClick={toggleJavascript}
+          title={`Turn ${allowJavascript ? 'Off' : 'On'} Javascript`}
+        >
+          {allowJavascript ? (
+            <Icon icon="teenyicons:javascript-solid" />
+          ) : (
+            <Icon icon="teenyicons:javascript-outline" />
+          )}
         </Button>
       </div>
       <Button
