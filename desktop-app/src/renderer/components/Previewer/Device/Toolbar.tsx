@@ -1,5 +1,5 @@
 import { Icon } from '@iconify/react';
-import { useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import Button from 'renderer/components/Button';
 import useSound from 'use-sound';
 import { ScreenshotArgs, ScreenshotResult } from 'main/screenshot';
@@ -8,6 +8,7 @@ import WebPage from 'main/screenshot/webpage';
 
 import screenshotSfx from 'renderer/assets/sfx/screenshot.mp3';
 import { updateWebViewHeightAndScale } from 'common/webViewUtils';
+import { JSToggleContext } from '../../../context/JSToggleProvider';
 
 interface Props {
   webview: Electron.WebviewTag | null;
@@ -34,13 +35,8 @@ const Toolbar = ({
   const [fullScreenshotLoading, setFullScreenshotLoading] =
     useState<boolean>(false);
   const [rotated, setRotated] = useState<boolean>(false);
-  const [allowJavascript, setAllowJavascript] = useState<boolean>(true);
 
-  const toggleJavascript = () => {
-    if (webview) {
-      // do something to refresh device views but toggle javascript
-    }
-  };
+  const javascriptContext = useContext(JSToggleContext);
 
   const refreshView = () => {
     if (webview) {
@@ -103,7 +99,7 @@ const Toolbar = ({
       }
       setScreenshotInProgress(true);
       const webPage = new WebPage(webview as unknown as Electron.WebContents);
-      const pageHeight = await webPage.getPageHeight();
+      const pageHeight = await webPage.getPageHeight(); // ................ error is here
 
       const previousHeight = webviewTag.style.height;
       const previousTransform = webviewTag.style.transform;
@@ -159,16 +155,26 @@ const Toolbar = ({
           </div>
         </Button>
         <Button
+          disabled={!javascriptContext?.allowJavascript}
+          disableHoverEffects={!javascriptContext?.allowJavascript}
           onClick={fullScreenshot}
           isLoading={fullScreenshotLoading}
-          title="Full Page Screenshot"
+          title={`Full Page Screenshot${
+            !javascriptContext?.allowJavascript &&
+            '\n(Disabled as Javascript is set to OFF)'
+          }`}
         >
           <Icon icon="ic:outline-photo-camera" />
         </Button>
         <Button
+          disabled={!javascriptContext?.allowJavascript}
+          disableHoverEffects={!javascriptContext?.allowJavascript}
           onClick={toggleEventMirroring}
           isActive={eventMirroringOff}
-          title="Disable Event Mirroring"
+          title={`Disable Event Mirroring${
+            !javascriptContext?.allowJavascript &&
+            '\n(Disabled as Javascript is set to OFF)'
+          }`}
         >
           <Icon icon="fluent:plug-disconnected-24-regular" />
         </Button>
@@ -184,29 +190,37 @@ const Toolbar = ({
             }
           />
         </Button>
+      </div>
+      <div className="flex items-center justify-center">
         <Button
-          onClick={toggleJavascript}
-          title={`Turn ${allowJavascript ? 'Off' : 'On'} Javascript`}
+          disabled
+          disableHoverEffects
+          onClick={() => {}}
+          title={`Javascript ${
+            javascriptContext?.allowJavascript ? 'Enabled' : 'Disabled'
+          }`}
         >
-          {allowJavascript ? (
+          {javascriptContext?.allowJavascript ? (
             <Icon icon="teenyicons:javascript-solid" />
           ) : (
             <Icon icon="teenyicons:javascript-outline" />
           )}
         </Button>
+        <Button
+          onClick={() => onIndividualLayoutHandler(device)}
+          title={`${
+            isIndividualLayout ? 'Disable' : 'Enable'
+          } Individual Layout`}
+        >
+          <Icon
+            icon={
+              isIndividualLayout
+                ? 'ic:twotone-zoom-in-map'
+                : 'ic:twotone-zoom-out-map'
+            }
+          />
+        </Button>
       </div>
-      <Button
-        onClick={() => onIndividualLayoutHandler(device)}
-        title={`${isIndividualLayout ? 'Disable' : 'Enable'} Individual Layout`}
-      >
-        <Icon
-          icon={
-            isIndividualLayout
-              ? 'ic:twotone-zoom-in-map'
-              : 'ic:twotone-zoom-out-map'
-          }
-        />
-      </Button>
     </div>
   );
 };

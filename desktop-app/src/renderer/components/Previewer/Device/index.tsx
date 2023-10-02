@@ -16,7 +16,7 @@ import {
   DeleteStorageArgs,
   DeleteStorageResult,
 } from 'main/webview-storage-manager';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Spinner from 'renderer/components/Spinner';
 import { ADDRESS_BAR_EVENTS } from 'renderer/components/ToolBar/AddressBar';
@@ -43,6 +43,7 @@ import { PREVIEW_LAYOUTS } from 'common/constants';
 import { NAVIGATION_EVENTS } from '../../ToolBar/NavigationControls';
 import Toolbar from './Toolbar';
 import { appendHistory } from './utils';
+import { JSToggleContext } from '../../../context/JSToggleProvider';
 
 interface Props {
   device: IDevice;
@@ -69,6 +70,25 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
   const devtoolsOpenForWebviewId = useSelector(selectDevtoolsWebviewId);
   const layout = useSelector(selectLayout);
   const dispatch = useDispatch();
+  const javascriptContext = useContext(JSToggleContext);
+
+  const [webKey, setWebKey] = useState<number>(0);
+  const [toolbarKey, setToolbarKey] = useState<number>(0);
+  const [counter, setCounter] = useState<number>(0);
+
+  useEffect(() => {
+    setCounter((prev) => prev + 1);
+
+    if (counter > 0) {
+      setWebKey((prev) => prev + 1);
+    }
+  }, [javascriptContext]);
+
+  useEffect(() => {
+    if (webKey > 0) {
+      setToolbarKey((prev) => prev + 1);
+    }
+  }, [webKey]);
 
   const dockPosition = useSelector(selectDockPosition);
   const ref = useRef<Electron.WebviewTag>(null);
@@ -191,6 +211,7 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
       isDevtoolsOpen,
       openDevTools,
       zoomfactor,
+      webKey,
     ]
   );
 
@@ -311,6 +332,7 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
     isPrimary,
     inspectElement,
     openDevTools,
+    webKey,
   ]);
 
   useEffect(() => {
@@ -371,6 +393,7 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
     openDevTools,
     zoomfactor,
     inspectElement,
+    webKey,
   ]);
 
   useEffect(() => {
@@ -424,7 +447,7 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
     return () => {
       webview?.removeEventListener('dom-ready', () => {});
     };
-  }, [dispatch, isPrimary]);
+  }, [dispatch, isPrimary, webKey]);
 
   const scaledHeight = height * zoomfactor;
   const scaledWidth = width * zoomfactor;
@@ -441,6 +464,7 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
         {loading ? <Spinner spinnerHeight={24} /> : null}
       </div>
       <Toolbar
+        key={toolbarKey}
         webview={ref.current}
         device={device}
         setScreenshotInProgress={setScreenshotInProgess}
@@ -456,6 +480,7 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
         <webview
           id={device.name}
           src={address}
+          key={webKey}
           style={{
             height,
             width,
@@ -467,7 +492,9 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
           /* eslint-disable-next-line react/no-unknown-property */
           preload={`file://${window.responsively.webviewPreloadPath}`}
           /* eslint-disable-next-line react/no-unknown-property */
-          webpreferences='javascript=yes'
+          webpreferences={`javascript=${
+            javascriptContext?.allowJavascript ? 'yes' : 'no'
+          }`}
           data-scale-factor={zoomfactor}
           /* eslint-disable-next-line react/no-unknown-property */
           allowpopups={isPrimary ? ('true' as any) : undefined}
@@ -476,7 +503,7 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
         />
         {screenshotInProgress ? (
           <div
-            className="absolute top-0 left-0 flex h-full w-full items-center justify-center bg-slate-600 bg-opacity-95"
+            className="absolute left-0 top-0 flex h-full w-full items-center justify-center bg-slate-600 bg-opacity-95"
             style={{ height: scaledHeight, width: scaledWidth }}
           >
             <Spinner spinnerHeight={30} />
@@ -484,7 +511,7 @@ const Device = ({ isPrimary, device, setIndividualDevice }: Props) => {
         ) : null}
         {error != null ? (
           <div
-            className="absolute top-0 left-0 flex h-full w-full items-center justify-center bg-slate-600 bg-opacity-95"
+            className="absolute left-0 top-0 flex h-full w-full items-center justify-center bg-slate-600 bg-opacity-95"
             style={{ height: scaledHeight, width: scaledWidth }}
           >
             <div className="text-center text-sm text-white">

@@ -12,6 +12,7 @@ import { selectLayout } from 'renderer/store/features/renderer';
 import Device from './Device';
 import DevtoolsResizer from './DevtoolsResizer';
 import IndividualLayoutToolbar from './IndividualLayoutToolBar';
+import JSToggleProvider from './Device/JSToggleProvider';
 
 const Previewer = () => {
   const activeSuite = useSelector(selectActiveSuite);
@@ -24,55 +25,57 @@ const Previewer = () => {
   const isIndividualLayout = layout === PREVIEW_LAYOUTS.INDIVIDUAL;
 
   return (
-    <div className="h-full">
-      {isIndividualLayout && (
-        <IndividualLayoutToolbar
-          individualDevice={individualDevice}
-          setIndividualDevice={setIndividualDevice}
-          devices={devices}
-        />
-      )}
-      <div
-        className={cx('flex h-full', {
-          'flex-col': dockPosition === DOCK_POSITION.BOTTOM,
-          'flex-row': dockPosition === DOCK_POSITION.RIGHT,
-          'justify-between': !isIndividualLayout,
-          'justify-center': isIndividualLayout,
-        })}
-      >
+    <JSToggleProvider>
+      <div className="h-full">
+        {isIndividualLayout && (
+          <IndividualLayoutToolbar
+            individualDevice={individualDevice}
+            setIndividualDevice={setIndividualDevice}
+            devices={devices}
+          />
+        )}
         <div
-          className={cx('flex h-full gap-4 overflow-auto p-4', {
-            'flex-wrap': layout === PREVIEW_LAYOUTS.FLEX,
+          className={cx('flex h-full', {
+            'flex-col': dockPosition === DOCK_POSITION.BOTTOM,
+            'flex-row': dockPosition === DOCK_POSITION.RIGHT,
+            'justify-between': !isIndividualLayout,
             'justify-center': isIndividualLayout,
           })}
         >
-          {isIndividualLayout ? (
-            <>
-              <Device
-                key={individualDevice.id}
-                device={individualDevice}
-                isPrimary
-                setIndividualDevice={setIndividualDevice}
-              />
-            </>
-          ) : (
-            <>
-              {devices.map((device, idx) => (
+          <div
+            className={cx('flex h-full gap-4 overflow-auto p-4', {
+              'flex-wrap': layout === PREVIEW_LAYOUTS.FLEX,
+              'justify-center': isIndividualLayout,
+            })}
+          >
+            {isIndividualLayout ? (
+              <>
                 <Device
-                  key={device.id}
-                  device={device}
-                  isPrimary={idx === 0}
+                  key={individualDevice.id}
+                  device={individualDevice}
+                  isPrimary
                   setIndividualDevice={setIndividualDevice}
                 />
-              ))}
-            </>
-          )}
+              </>
+            ) : (
+              <>
+                {devices.map((device, idx) => (
+                  <Device
+                    key={device.id}
+                    device={device}
+                    isPrimary={idx === 0}
+                    setIndividualDevice={setIndividualDevice}
+                  />
+                ))}
+              </>
+            )}
+          </div>
+          {isDevtoolsOpen && dockPosition !== DOCK_POSITION.UNDOCKED ? (
+            <DevtoolsResizer />
+          ) : null}
         </div>
-        {isDevtoolsOpen && dockPosition !== DOCK_POSITION.UNDOCKED ? (
-          <DevtoolsResizer />
-        ) : null}
       </div>
-    </div>
+    </JSToggleProvider>
   );
 };
 
