@@ -12,6 +12,7 @@ import DeviceManager from './components/DeviceManager';
 import KeyboardShortcutsManager from './components/KeyboardShortcutsManager';
 import ReleaseNotes from './components/ReleaseNotes';
 import { Sponsorship } from './components/Sponsorship';
+import JSToggleProvider from './context/JSToggleProvider';
 
 const Browser = () => {
   return (
@@ -43,10 +44,12 @@ const AppContent = () => {
   return (
     <Provider store={store}>
       <ThemeProvider>
-        <KeyboardShortcutsManager />
-        <ViewComponent />
-        <ReleaseNotes />
-        <Sponsorship />
+        <JSToggleProvider>
+          <KeyboardShortcutsManager />
+          <ViewComponent />
+          <ReleaseNotes />
+          <Sponsorship />
+        </JSToggleProvider>
       </ThemeProvider>
     </Provider>
   );
