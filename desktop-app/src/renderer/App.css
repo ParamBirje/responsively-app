@@ -15,3 +15,11 @@
 html {
   user-select: none;
 }
+
+.cet-title {
+  color: white;
+}
+
+.cet-menubar {
+  color: white;
+}

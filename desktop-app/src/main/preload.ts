@@ -48,6 +48,5 @@ window.addEventListener('DOMContentLoaded', () => {
   // eslint-disable-next-line no-new
   new Titlebar({
     backgroundColor: TitlebarColor.fromHex('#37b598'),
-    // itemBackgroundColor: TitlebarColor.fromHex('#FFFFFF'),
   });
 });
